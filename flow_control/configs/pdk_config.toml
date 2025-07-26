@@ -1,0 +1,49 @@
+# ==========================================================
+# PDK and Library Environment Configuration (TOML Version)
+#
+# This file defines all paths related to the Process Design Kit (PDK).
+# It serves as the single source of truth for the entire flow.
+# ==========================================================
+
+# --- Root path for the entire PDK ---
+pdk_root = "/15T/Library/Library/SMIC40/SMIC_40nm_LL_HDC40_STD_CELL/SCC40NLL_HDC40_RVT_V0.1/SCC40NLL_HDC40_RVT_V0p1"
+
+# --- Derived paths using the pdk_root variable ---
+# The {pdk_root} placeholder will be expanded by the Python script.
+[derived_paths]
+logic_lib_path  = "{pdk_root}/liberty/0.9v"
+symbol_lib_path = "{pdk_root}"
+mw_ref_lib_path = "{pdk_root}/astro/scc40nll_hdc40_rvt"
+tech_file_path  = "{pdk_root}/astro/tf"
+tluplus_path    = "{pdk_root}/astro/tluplus/TD-LO40-XS-2001v2R_1PxM_2TM9k_ALPA14.5k/1P10M_2TM"
+
+# --- Specific file names ---
+[files]
+tech_file           = "scc40nll_hd_10lm_2tm.tf"
+symbol_library_file = "scc40nll_hdc40_rvt.sdb"
+dw_foundation_file   = "dw_foundation.sldb"
+tluplus_min_file    = "StarRC_40LL_1P10M_2TM_CMIN.tluplus"
+tluplus_max_file    = "StarRC_40LL_1P10M_2TM_CMAX.tluplus"
+tluplus_map_file    = "StarRC_40LL_1P10M_2TM_cell.map"
+
+[RTL]
+rtl_files = [
+    "aes_128.v",
+    "round.v",
+    "table.v"
+]
+
+# --- Corner-specific logic library files ---
+[flow_settings]
+active_corner = "tt"
+
+# Each corner is defined as a sub-table under the [corners] table.
+[corners.tt]
+target_library_file = "scc40nll_hdc40_rvt_tt_v0p9_25c_basic.db"
+
+[corners.ss]
+target_library_file = "scc40nll_hdc40_rvt_ss_v0p81_125c_basic.db"
+
+[corners.ff]
+target_library_file = "scc40nll_hdc40_rvt_ff_v0p99_-40c_basic.db"
+

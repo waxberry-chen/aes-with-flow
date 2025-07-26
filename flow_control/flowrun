@@ -1,0 +1,257 @@
+#!/usr/local/bin/python3.11
+#------------------------------------
+# flowrun for Python 3.6
+#Flow for easy usage and automation
+#rel1.0
+# You should run this program in work_flowtest
+# It will automaticlly change into work_flowtest/my_top_wrap
+#------------------------------------
+import sys
+import argparse
+import subprocess
+import multiprocessing
+import os
+import time
+import re
+import tomllib
+
+
+print('------------------------------------------------')
+print('hello: flow here')
+# feature: Dump current executing python file into a variable
+current_file = __file__
+# abspath: absolute path
+flowrun_path = os.path.abspath(current_file)
+# split: parse the path and filename
+flow_path = os.path.split(current_file)[0]
+flow_scripts = os.path.join(flow_path, f"scripts")
+flow_config = os.path.join(flow_path, f"configs")
+
+print('flowrun flow:',flowrun_path)
+print('flowrun flow:',flow_path)
+
+parser = argparse.ArgumentParser(description = 'argparse')
+
+#design name, tag
+parser.add_argument('-config',type=str,default='')
+#parser.add_argument('-tag',type=str,default='')
+parser.add_argument('-debug',type=str,default='false')
+
+##### Here we parse the options #####
+args = parser.parse_args()
+# print(args) 
+config = args.config
+parts = config.split('.')
+design = parts[0]
+tag = parts[1]
+debug = args.debug
+# Add f in front of your strin, you can add variables in {}
+print(f"flowrun design: {design}")
+print(f"flowrun tag: {tag}")
+print(f"flowrun debug: {debug}")
+
+if not design:
+	print("flowrun-error: design name is empty, exit")
+	sys.exit(1)
+
+if not tag:
+	print("flowrun-error: tag name is empty, exit")
+	sys.exit(1)
+
+
+###########################################
+#     Define and make Lv1 directories     #
+###########################################
+##### In flow_work #####
+if not os.path.exists(design):
+	os.makedirs(design)
+os.chdir(design)
+
+results_path = "results"
+os.makedirs(results_path, exist_ok=True)
+
+work_scripts = "../scripts"
+
+###############################################
+#     Pass global variables into init.tcl     #
+###############################################
+init_file_name = "flow_init.tcl"
+with open(init_file_name, 'w') as file:
+	file.write("##### Global Variables #####\n")
+	file.write(f"set FLOW_DESIGN_NAME {design}\n")
+	file.write(f"set FLOW_TAG {tag}\n")
+	file.write(f"set FLOW_DEBUG {debug}\n")
+	file.write(f"set FLOW_SCRIPTS_DIR {flow_scripts}\n")
+	file.write(f"set WORK_SCRIPTS_DIR {work_scripts}\n")
+
+
+#------------------------------------------------------
+#step4: submit jobs to servers
+
+user_file_path = f"../{config}"
+user_matched_lines = []
+with open(user_file_path, 'r') as file:
+	for line in file:
+		if line.startswith('step'):
+			user_matched_lines.append(line.strip())
+
+# get common step information into common_matched_lines
+common_file_path = f"{flow_config}/flow_config.tcl"
+common_matched_lines = []
+setup_scenarios_matched_lines = []
+hold_scenarios_matched_lines = []
+with open(common_file_path, 'r') as file:
+	for line in file:
+		if line.startswith('step'):
+			common_matched_lines.append(line.strip())
+
+matched_lines = []
+if user_matched_lines:
+	matched_lines = user_matched_lines
+elif common_matched_lines:
+	matched_lines = common_matched_lines
+else:
+	print("flowrun-error: run-steps are empty, exit")
+	sys.exit(1)
+
+# print step information
+all_step_num = len(matched_lines)
+current_work_path = os.getcwd()
+print("flowrun executing current working directory:", current_work_path)
+print("flowrun executing total step num:",all_step_num)
+print('------------------------------------------------')
+
+
+##### Load PDK configuration from TOML file #####
+pdk_config_file = f"{flow_config}/pdk_config.toml"
+try:
+	with open(pdk_config_file, 'rb') as f: # TOML standard library reads in binary mode
+		pdk_config = tomllib.load(f)
+        # For the `toml` library, use:
+		# pdk_config = toml.load(f) # Reads in text mode
+except FileNotFoundError:
+	print(f"FATAL ERROR: PDK config file not found at '{pdk_config_file}'")
+	exit(1)
+
+# get root path
+pdk_root = pdk_config['pdk_root']
+# get RTL
+rtl_file_list_from_toml = pdk_config.get('RTL', {}).get('rtl_files', [])
+    
+rtl_files_for_tcl = []
+    
+if rtl_file_list_from_toml:
+	for filename in rtl_file_list_from_toml:
+		tcl_path = f'"../global_input/rtl/{filename}"'
+		rtl_files_for_tcl.append(tcl_path)
+	
+tcl_rtl_list_command = f"set RTL_FILES [list {' '.join(rtl_files_for_tcl)}]"
+
+with open(init_file_name, 'a') as file:
+	##### Write paths #####
+	file.write("\n##### PDK & Library Environment Variables (from TOML) #####\n")
+    # Write pdk root path
+	file.write(f"set PDK_ROOT \"{pdk_root}\"\n")
+	# write other paths
+	for key, path_template in pdk_config['derived_paths'].items():
+		full_path = path_template.format(pdk_root=pdk_root)
+		tcl_var_name = key.upper()
+		file.write(f"set {tcl_var_name} \"{full_path}\"\n")
+    # Write file variables
+	for key, value in pdk_config['files'].items():
+		tcl_var_name = key.upper()
+		file.write(f"set {tcl_var_name} \"{value}\"\n")
+	# Write active corner variables
+	for key, value in pdk_config['flow_settings'].items():
+		tcl_var_name = key.upper()
+		file.write(f"set {tcl_var_name} \"{value}\"\n")
+    # Corner convert to Tcl array
+	file.write("array set CORNER_LIBS {\n")
+	for corner, data in pdk_config['corners'].items():
+		file.write(f"    {corner} \"{data['target_library_file']}\"\n")
+	file.write("}\n")
+
+	##### Write RTL #####
+	file.write("\n##### RTL File List (from TOML) #####\n")
+	file.write(f"{tcl_rtl_list_command}\n")
+	file.write("\n")
+
+##### Parse step informations we get in #####
+for line in matched_lines:
+	#print(f"matched line: {line}")
+	parts = line.split()
+	parts_num = len(parts)
+	if parts_num < 6:
+		print("flowrun-error: not valid step ",line)
+		sys.exit(1)
+	##### Here we have step information #####
+	step_num = parts[0]
+	step_name = parts[1]
+	tool_name = parts[2]
+	script_name = parts[3]
+	predecessor_dir = parts[4]
+	run_type = parts[5]
+
+	##### Make directories for each step #####
+	step_dir 			= os.path.join(results_path, f"{step_name}_{tag}")
+	step_output_dir 	= os.path.join(step_dir, f"output")
+	step_log_dir 		= os.path.join(step_dir, f"log")
+	step_reports_dir 	= os.path.join(step_dir, f"reports")
+	step_buffer_dir		= os.path.join(step_dir, f"intermedia")
+	os.makedirs(step_output_dir, exist_ok=True)
+	os.makedirs(step_log_dir, exist_ok=True)
+	os.makedirs(step_reports_dir, exist_ok=True)
+	os.makedirs(step_buffer_dir, exist_ok=True)
+
+	#start to generate command:dc,tessent,dc_incr,dc_syn,pt,fm,vclp,gca / innovus,qrc,pt,lec,clp,gca
+	with open(init_file_name, 'a') as file:
+		file.write("\n##### Step Variables #####\n")
+		# get from config tcl
+		file.write(f"set FLOW_STEP_NAME {step_name}\n")
+		file.write(f"set FLOW_PREDECESSOR_DIR {predecessor_dir}\n")
+		# get from this file
+		file.write(f"set FLOW_STEP_DIR {step_dir}\n")
+		file.write(f"set FLOW_STEP_OUTPUT_DIR {step_output_dir}\n")
+		file.write(f"set FLOW_STEP_LOG_DIR {step_log_dir}\n")
+		file.write(f"set FLOW_STEP_REPORTS_DIR {step_reports_dir}\n")
+		file.write(f"set FLOW_STEP_BUFFER_DIR {step_buffer_dir}\n")
+
+	if tool_name == "dc_shell" and debug == "false":
+		command = f"{tool_name} -topo -f {script_name} > {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+	elif tool_name == "dc_shell" and debug == "true":
+		command = f"{tool_name} -topo -f {script_name} | tee {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+	elif tool_name == "pt_shell" and debug == "false" and "timinginit" in step_name:
+		command = f"{tool_name} -f {script_name} > {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+	elif tool_name == "pt_shell" and debug == "true" and "timinginit" in step_name:
+		command = f"{tool_name} -f {script_name} | tee {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+	elif tool_name == "tessent" and debug == "false":
+		command = f"{tool_name} -shell -dofile {script_name} > {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+	elif tool_name == "tessent" and debug == "true":
+		command = f"{tool_name} -shell -dofile {script_name} | tee {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+	elif tool_name == "innovus" and debug == "false":
+		command = f"{tool_name} -no_gui -files {script_name} > {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+	elif tool_name == "innovus" and debug == "true":
+		command = f"{tool_name} -no_gui -files {script_name} -log {step_log_dir}/{tool_name}_{step_name}.{tag}"
+	elif tool_name == "pt_shell" and debug == "false" and "timingfinish" in step_name:
+		command = f"{tool_name} -f {script_name} > {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+	elif tool_name == "pt_shell" and debug == "true" and "timingfinish" in step_name:
+		command = f"{tool_name} -f {script_name} | tee {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+
+	print("flowrun executing:",step_num, command)
+	p = subprocess.Popen(command,shell=True)
+	if run_type == "serial":
+		p.wait()
+
+
+
+##step5: summarize results
+
+
+
+print("flowrun executing finished")
+print('------------------------------------------------')
+
+
+
+
+
