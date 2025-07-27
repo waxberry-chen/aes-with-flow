@@ -1,0 +1,25 @@
+###
+# ${FLOW_DESIGN_NAME} golden upf
+###
+
+create_supply_net VSS
+create_supply_net VDD
+
+create_supply_set pg  -function {power VDD}  -function {ground VSS}
+create_power_domain AES_POWER  -supply {primary pg }
+
+create_supply_port VDD -domain AES_POWER -direction in
+create_supply_port VSS -domain AES_POWER -direction in
+
+
+connect_supply_net VSS  -ports VSS
+connect_supply_net VDD  -ports VDD
+
+
+set_design_attributes -elements {.} -attribute correlated_supply_group {*}
+
+add_power_state -supply pg  -state ON  { -supply_expr { power == {FULL_ON 0.99 1.10 1.21} && ground == {FULL_ON 0.0} } }
+
+create_power_state_group PST
+add_power_state -group PST \
+	-state RUN   {-logic_expr { pg==ON}}

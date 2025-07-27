@@ -21,9 +21,10 @@ tluplus_path    = "{pdk_root}/astro/tluplus/TD-LO40-XS-2001v2R_1PxM_2TM9k_ALPA14
 [files]
 tech_file           = "scc40nll_hd_10lm_2tm.tf"
 symbol_library_file = "scc40nll_hdc40_rvt.sdb"
-dw_foundation_file   = "dw_foundation.sldb"
+dw_foundation_file  = "dw_foundation.sldb"
 tluplus_min_file    = "StarRC_40LL_1P10M_2TM_CMIN.tluplus"
 tluplus_max_file    = "StarRC_40LL_1P10M_2TM_CMAX.tluplus"
+tluplus_typ_file    = "StarRC_40LL_1P10M_2TM_TYP.tluplus"
 tluplus_map_file    = "StarRC_40LL_1P10M_2TM_cell.map"
 
 [RTL]

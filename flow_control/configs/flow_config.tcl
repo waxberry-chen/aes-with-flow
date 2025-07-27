@@ -8,8 +8,8 @@
 #---------------------------------------
 #step settings:stepnum stepname toolname toolscript predecessor runmode(only serial now)
 set FLOW_STEPS " \
-step1: syn dc_shell ../../flow_control/scripts/01dc_syn.tcl ../global_input serial \
-step2: placement icc2_shell ../../flow_control/scripts/02icc2_placement.tcl
+step1: syn dc_shell ../../flow_control/scripts/01_dc_dummy.tcl ../global_input serial \
+step2: placement icc2_shell ../../flow_control/scripts/02_icc2_placement.tcl ./results/syn_${FLOW_TAG}/output serial \
 "
 
 #---------------------------------------

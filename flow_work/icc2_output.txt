@@ -1,0 +1,20 @@
+
+icc2_shell> source aes_128/flow_init.tcl
+results/placement_test/intermedia
+icc2_shell> source scripts/GetCellArea.tcl
+Error: could not open script file "../scripts/placement_initial.tcl" (CMD-015)
+Information: script '/home/cym/prj/aes-with-flow/flow_work/scripts/GetCellArea.tcl'
+        stopped at line 1 due to error. (CMD-081)
+Extended error info:
+
+    while executing
+"source ${WORK_SCRIPTS_DIR}/placement_initial.tcl"
+ -- End Extended Error Info
+icc2_shell> exitr
+Error: unknown command 'exitr' (CMD-005)
+icc2_shell> exit
+Maximum memory usage for this session: 126.32 MB
+CPU usage for this session:      3 seconds (  0.00 hours)
+Elapsed time for this session:    105 seconds (  0.03 hours)
+Thank you for using IC Compiler II.
+

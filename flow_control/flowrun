@@ -71,6 +71,8 @@ results_path = "results"
 os.makedirs(results_path, exist_ok=True)
 
 work_scripts = "../scripts"
+flow_input = "../global_input"
+flow_output = "../global_output"
 
 ###############################################
 #     Pass global variables into init.tcl     #
@@ -83,6 +85,8 @@ with open(init_file_name, 'w') as file:
 	file.write(f"set FLOW_DEBUG {debug}\n")
 	file.write(f"set FLOW_SCRIPTS_DIR {flow_scripts}\n")
 	file.write(f"set WORK_SCRIPTS_DIR {work_scripts}\n")
+	file.write(f"set FLOW_INPUT_DIR {flow_input}\n")
+	file.write(f"set FLOW_OUTPUT_DIR {flow_output}\n")
 
 
 #------------------------------------------------------
@@ -220,6 +224,10 @@ for line in matched_lines:
 		command = f"{tool_name} -topo -f {script_name} > {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
 	elif tool_name == "dc_shell" and debug == "true":
 		command = f"{tool_name} -topo -f {script_name} | tee {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+	elif tool_name == "icc2_shell" and debug == "false":
+		command = f"{tool_name} -f {script_name} > {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+	elif tool_name == "icc2_shell" and debug == "true":
+		command = f"{tool_name} -f {script_name} | tee {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
 	elif tool_name == "pt_shell" and debug == "false" and "timinginit" in step_name:
 		command = f"{tool_name} -f {script_name} > {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
 	elif tool_name == "pt_shell" and debug == "true" and "timinginit" in step_name:
