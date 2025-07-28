@@ -1,16 +1,22 @@
 #==============routeopt aes=============#
-set design "aes_128"
-set current_step "06_routeopt"
-set before_step "05_route"
+source flow_init.tcl
+source ../${FLOW_DESIGN_NAME}.${FLOW_TAG}.usrconfig.tcl
 
+#===========route aes============#
+set design ${FLOW_DESIGN_NAME}
+set current_step ${FLOW_STEP_NAME}
+set before_step ${FLOW_PRESTEP_NAME}
+
+set_host_options -max_cores ${FLOW_CORE_NUM}
 ###initial setting
 
-set nlib_dir "./nlib"
+set nlib_dir ${FLOW_STEP_OUTPUT_DIR}
+
 
 ###database
 file mkdir $nlib_dir
 file delete -force $nlib_dir/${design}_${current_step}.nlib
-copy_lib -from_lib ${nlib_dir}/${design}_${before_step}.nlib -to_lib ${nlib_dir}/${design}_${current_step}.nlib -force
+copy_lib -from_lib ${FLOW_PREDECESSOR_DIR}/${design}_${before_step}.nlib -to_lib ${nlib_dir}/${design}_${current_step}.nlib -force
 current_lib ${design}_${current_step}.nlib
 open_block ${design}_${current_step}.nlib:${design}.design
 
@@ -18,7 +24,7 @@ open_block ${design}_${current_step}.nlib:${design}.design
 
 
 ###scenarios 
-source ./constrains/route_scenarios.tcl
+source ${WORK_SCRIPTS_DIR}/scenarios_route.tcl
 
 set_propagated_clock [get_clocks -filter "is_virtual == false"]
 
@@ -73,3 +79,10 @@ save_block
 save_lib
 
 print_message_info
+
+# Exit or wait
+if {[info exist FLOW_DEBUG] && [string match true $FLOW_DEBUG]} {
+	echo "debug mode, pls. manual exit when done."
+} else {
+	exit
+}

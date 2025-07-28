@@ -9,7 +9,7 @@ set design_root_dir ${FLOW_STEP_DIR}
 # ===== design data directory ===== #
 
 #-------- Library ndm dir----------#
-set ndm_dir "${FLOW_STEP_BUFFER_DIR}/ndm"
+set ndm_dir "${FLOW_INPUT_DIR}/ndm"
 file mkdir $ndm_dir
 
 set nlib_dir "${FLOW_STEP_OUTPUT_DIR}/nlib"

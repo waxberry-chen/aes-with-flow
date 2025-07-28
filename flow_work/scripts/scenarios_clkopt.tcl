@@ -2,7 +2,7 @@ set max_trans_clk 0.3
 set max_trans_data 0.3
 set max_capacitance 200
 
-set sdc_file "./aes_128_final.sdc"
+set sdc_file "./results/syn_${FLOW_TAG}/output/aes_128_final.sdc"
 
 set smic_icc2rc_tech(cmin)       "/15T/Library/Library/SMIC40/SMIC_40nm_LL_HDC40_STD_CELL/SCC40NLL_HDC40_RVT_V0.1/SCC40NLL_HDC40_RVT_V0p1/astro/tluplus/TD-LO40-XS-2001v2R_1PxM_2TM9k_ALPA14.5k/1P10M_2TM/StarRC_40LL_1P10M_2TM_CMIN.tluplus"
 set smic_icc2rc_tech(cmax)       "/15T/Library/Library/SMIC40/SMIC_40nm_LL_HDC40_STD_CELL/SCC40NLL_HDC40_RVT_V0.1/SCC40NLL_HDC40_RVT_V0p1/astro/tluplus/TD-LO40-XS-2001v2R_1PxM_2TM9k_ALPA14.5k/1P10M_2TM/StarRC_40LL_1P10M_2TM_CMAX.tluplus"

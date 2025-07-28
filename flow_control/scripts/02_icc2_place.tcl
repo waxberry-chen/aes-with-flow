@@ -74,7 +74,7 @@ echo "$start_time" > $temp_ndm_path/tag
 echo "$msg" >> $temp_ndm_path/tag
 
 # set used max cpu cores
-set_host_options -max_cores 96
+set_host_options -max_cores ${FLOW_CORE_NUM}
 
 redirect -tee $run_log/floorplan_run.log {
     # ========== Create floorplan in ICC2 ========== #

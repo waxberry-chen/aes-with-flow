@@ -18,6 +18,9 @@
 # set FLOW_STEP_REPORTS_DIR results/clock_test/reports
 # set FLOW_STEP_BUFFER_DIR results/clock_test/intermedia
 
+source flow_init.tcl
+source ../${FLOW_DESIGN_NAME}.${FLOW_TAG}.usrconfig.tcl
+
 #============clock for aes============#
 set design ${FLOW_DESIGN_NAME}
 set current_step ${FLOW_STEP_NAME}
@@ -79,4 +82,10 @@ save_lib
 
 print_message_info
 
-quit
+# Exit or wait
+if {[info exist FLOW_DEBUG] && [string match true $FLOW_DEBUG]} {
+	echo "debug mode, pls. manual exit when done."
+} else {
+	exit
+}
+
