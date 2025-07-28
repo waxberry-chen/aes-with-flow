@@ -1,5 +1,5 @@
-source ${WORK_SCRIPTS_DIR}/placement_initial.tcl
-source ${WORK_SCRIPTS_DIR}/placement_function.tcl
+source ${WORK_SCRIPTS_DIR}/place_initial.tcl
+source ${WORK_SCRIPTS_DIR}/place_function.tcl
 
 # source ${WORK_SCRIPTS_DIR}/0p5_lm_ndm.tcl
 

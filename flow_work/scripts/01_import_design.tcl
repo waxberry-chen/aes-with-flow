@@ -1,5 +1,5 @@
 # ========== Read design into ICC2 ========== #
-source ${WORK_SCRIPTS_DIR}/placement_initial.tcl
+source ${WORK_SCRIPTS_DIR}/place_initial.tcl
 
 # ===== create nlib ===== #
 #file mkdir $nlib_dir

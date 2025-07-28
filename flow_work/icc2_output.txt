@@ -1,20 +1,33 @@
 
-icc2_shell> source aes_128/flow_init.tcl
-results/placement_test/intermedia
-icc2_shell> source scripts/GetCellArea.tcl
-Error: could not open script file "../scripts/placement_initial.tcl" (CMD-015)
-Information: script '/home/cym/prj/aes-with-flow/flow_work/scripts/GetCellArea.tcl'
-        stopped at line 1 due to error. (CMD-081)
-Extended error info:
+icc2_shell> man LNK-062
+N.  Messages                                                 Command Reference
+                                   messages
 
-    while executing
-"source ${WORK_SCRIPTS_DIR}/placement_initial.tcl"
- -- End Extended Error Info
-icc2_shell> exitr
-Error: unknown command 'exitr' (CMD-005)
+NAME
+       LNK-062 (warning) Library %s reference library '%s' is not bound.
+
+DESCRIPTION
+       This  library  has  reference libraries that have not been bound to the
+       actual library named.  The link_block command cannot resolve references
+       to  blocks  or lib cells in the unbound library.  Those references will
+       be unresolved.
+
+       The specified block is in a library that  has  not  had  its  reference
+       library list set.  The reference library list is used to resolve refer-
+       ences to lib_cells and other blocks in the block hierarchy.
+
+WHAT NEXT
+       Verify that the reference library list on  this  library  is  set  cor-
+       rectly.   Correct  the setting with the set_ref_libs command.  Check to
+       see if the TCL search_path variable is  set  to  locate  that  library.
+       Verify  that  the  library  is on disk and readable.  Try to explicitly
+       open the library with the open_lib command.
+
+                          Version O-2018.06-SP1
+            Copyright (c) 2018 Synopsys, Inc. All rights reserved.
 icc2_shell> exit
-Maximum memory usage for this session: 126.32 MB
+Maximum memory usage for this session: 126.29 MB
 CPU usage for this session:      3 seconds (  0.00 hours)
-Elapsed time for this session:    105 seconds (  0.03 hours)
+Elapsed time for this session:    968 seconds (  0.27 hours)
 Thank you for using IC Compiler II.
 

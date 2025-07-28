@@ -90,7 +90,7 @@ set tie_cells "*/FILLTIE_8TR40"
 # icc2_shell> eval $var_name
 ################################
 # show timing path: defined in var setting
-set showpath "source ${WORK_SCRIPTS_DIR}/placement_ShowPath.tcl"
+set showpath "source ${WORK_SCRIPTS_DIR}/place_ShowPath.tcl"
 
 # ===== error not fatal, continue ===== #
 set_app_var sh_continue_on_error true
@@ -112,7 +112,7 @@ set_app_var sh_continue_on_error true
 # mode=1 open id file ; mode=0 open 'file'
 set mode 0
 set id 1
-set file results/placement_test/output/nlib/aes_128_01_import_multi_scenarios_physical.nlib
+set file results/place_test/output/nlib/aes_128_01_import_multi_scenarios_physical.nlib
 #delete nlib/delete_id_ndm.tcl
 #only delete id file with logs/reports
 set del_ndm_id 12
@@ -140,7 +140,7 @@ set user_select_ndms ""
 # used for setiing design 
 # 02_floorplan.tcl
 ##########################
-set 02_floorplan_nlib_name "02_placement"
+set 02_floorplan_nlib_name "02_place"
 set 02_floorplan_before_nlib  "01_import_multi_scenarios_physical"
 
 # ------------ floorplan ----------#

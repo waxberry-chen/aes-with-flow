@@ -2,8 +2,8 @@ source flow_init.tcl
 source ../${FLOW_DESIGN_NAME}.${FLOW_TAG}.usrconfig.tcl
 
 
-source ${WORK_SCRIPTS_DIR}/placement_initial.tcl
-source ${WORK_SCRIPTS_DIR}/placement_function.tcl
+source ${WORK_SCRIPTS_DIR}/place_initial.tcl
+source ${WORK_SCRIPTS_DIR}/place_function.tcl
 ################ message for current nlib##############
 set msg $MSG
 #######################################################
@@ -27,7 +27,7 @@ create_lib $nlib_dir/${design}_${01_import_nlib_name}.nlib\
 read_verilog -library ${design}_${01_import_nlib_name}.nlib -design ${design} -top $design $import_netlists
 
 # ===== initialization ===== #
-source ${WORK_SCRIPTS_DIR}/placement_initialization_settings.tcl
+source ${WORK_SCRIPTS_DIR}/place_initialization_settings.tcl
 ### load upf file
 
 set_app_options -name mv.upf.enable_golden_upf -value true
@@ -46,8 +46,6 @@ save_lib
 
 # ===== exit ===== #
 print_message_info
-quit!
-
 
 ###### reports and logs were passed by 00_initial.tcl ######
 
@@ -66,8 +64,8 @@ file mkdir $opt_dir
 
 # nlib
 ###### HERE OUTPUT ######
-set temp_ndm_path "${temp_dir}/${design}_${02_floorplan_nlib_name}#${start_time}.nlib"
-set temp_ndm ${design}_${02_floorplan_nlib_name}#${start_time}.nlib
+set temp_ndm_path "${temp_dir}/${design}_${02_floorplan_nlib_name}.nlib"
+set temp_ndm ${design}_${02_floorplan_nlib_name}.nlib
 
 write_id_file $temp_ndm
 
@@ -94,14 +92,14 @@ redirect -tee $run_log/floorplan_run.log {
 
     # ===== place ports ===== #
     ### constraints
-    source ${WORK_SCRIPTS_DIR}/placement_place_ports.tcl
+    source ${WORK_SCRIPTS_DIR}/place_place_ports.tcl
 
    
     puts "\n-------------------PG net-----------------------------------"
-    source ${WORK_SCRIPTS_DIR}/placement_gen_pg_net.tcl
+    source ${WORK_SCRIPTS_DIR}/place_gen_pg_net.tcl
     
     puts "\n ----------------- Scenarios -------------------------------"
-    source ${WORK_SCRIPTS_DIR}/placement_gen_scenarios.tcl
+    source ${WORK_SCRIPTS_DIR}/place_gen_scenarios.tcl
 
     puts "\n-------------------Place optimizer--------------------------"
     ### set tap cells and tie cell
@@ -151,37 +149,35 @@ redirect -tee $run_log/floorplan_run.log {
 
 }
 
+## opt
+puts "\n Satrt place optimize:"
+puts "--------------- Step 1------------------------------------------"
+redirect -tee $opt_dir/initial_place_to_initial_drc.log {
+    echo " Start Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
+    place_opt -from initial_place -to initial_drc
+    echo " Finish Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
+}
 
+puts "\n--------------- Step 2------------------------------------------"
+redirect -tee $opt_dir/initial_drc_to_initial_opto.log {
+    echo " Start Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
+    place_opt -from initial_drc -to initial_opto
+    echo " Finish Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
+}
 
-# ## opt
-# puts "\n Satrt place optimize:"
-# puts "--------------- Step 1------------------------------------------"
-# redirect -tee $opt_dir/initial_place_to_initial_drc.log {
-#     echo " Start Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
-#     place_opt -from initial_place -to initial_drc
-#     echo " Finish Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
-# }
+puts "\n--------------- Step 3------------------------------------------"
+redirect -tee $opt_dir/initial_opto_to_final_place.log {
+    echo " Start Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
+    place_opt -from initial_opto -to final_place
+    echo " Finish Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
+}
 
-# puts "\n--------------- Step 2------------------------------------------"
-# redirect -tee $opt_dir/initial_drc_to_initial_opto.log {
-#     echo " Start Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
-#     place_opt -from initial_drc -to initial_opto
-#     echo " Finish Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
-# }
-
-# puts "\n--------------- Step 3------------------------------------------"
-# redirect -tee $opt_dir/initial_opto_to_final_place.log {
-#     echo " Start Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
-#     place_opt -from initial_opto -to final_place
-#     echo " Finish Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
-# }
-
-# puts "\n--------------- Step 4------------------------------------------"
-# redirect -tee $opt_dir/final_place_to_final_opto.log {
-#     echo " Start Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
-#     place_opt -from final_place -to final_opto
-#     echo " Finish Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
-# }
+puts "\n--------------- Step 4------------------------------------------"
+redirect -tee $opt_dir/final_place_to_final_opto.log {
+    echo " Start Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
+    place_opt -from final_place -to final_opto
+    echo " Finish Time : [clock format [clock seconds] -format "%Y-%m-%d %H:%M:%S"] "
+}
 
 #write_floorplan -output ${log_dir}/$start_time/floorplan
 write_script -output $run_log/wscript

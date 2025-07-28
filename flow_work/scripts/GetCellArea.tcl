@@ -1,5 +1,5 @@
-source ${WORK_SCRIPTS_DIR}/placement_initial.tcl
-source ${WORK_SCRIPTS_DIR}/placement_function.tcl
+source ${WORK_SCRIPTS_DIR}/place_initial.tcl
+source ${WORK_SCRIPTS_DIR}/place_function.tcl
 
 if {$mode} {
     set file_id $id

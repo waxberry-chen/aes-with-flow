@@ -1,11 +1,9 @@
 #!/usr/local/bin/python3.11
-#------------------------------------
-# flowrun for Python 3.6
-#Flow for easy usage and automation
-#rel1.0
-# You should run this program in work_flowtest
-# It will automaticlly change into work_flowtest/my_top_wrap
-#------------------------------------
+#############################################################
+# Flow for automation										#
+# You should run this program in flow_work					#
+# It will automaticlly change into flow_work/${DESIGN_NAME} #
+#############################################################
 import sys
 import argparse
 import subprocess
@@ -32,12 +30,16 @@ print('flowrun flow:',flow_path)
 
 parser = argparse.ArgumentParser(description = 'argparse')
 
-#design name, tag
+# design name, tag
 parser.add_argument('-config',type=str,default='')
-#parser.add_argument('-tag',type=str,default='')
+# parser.add_argument('-tag',type=str,default='')
 parser.add_argument('-debug',type=str,default='false')
+# parse which step to run
+parser.add_argument('-steps', type=str, help='Specify which steps to run, separated by commas (e.g. "syn,place,cts")')
 
-##### Here we parse the options #####
+#############################
+# Here we parse the options #
+#############################
 args = parser.parse_args()
 # print(args) 
 config = args.config
@@ -45,10 +47,15 @@ parts = config.split('.')
 design = parts[0]
 tag = parts[1]
 debug = args.debug
+run_certain_steps = []
+if args.steps:
+	run_certain_steps = [step.strip() for step in args.steps.split(',')]
 # Add f in front of your strin, you can add variables in {}
+
 print(f"flowrun design: {design}")
 print(f"flowrun tag: {tag}")
 print(f"flowrun debug: {debug}")
+print(f"flowrun will run following steps: {run_certain_steps}")
 
 if not design:
 	print("flowrun-error: design name is empty, exit")
@@ -180,7 +187,10 @@ with open(init_file_name, 'a') as file:
 	file.write(f"{tcl_rtl_list_command}\n")
 	file.write("\n")
 
-##### Parse step informations we get in #####
+
+# Parse step informations we get in #
+step_name = None
+
 for line in matched_lines:
 	#print(f"matched line: {line}")
 	parts = line.split()
@@ -190,11 +200,16 @@ for line in matched_lines:
 		sys.exit(1)
 	##### Here we have step information #####
 	step_num = parts[0]
+	pre_step_name = step_name
 	step_name = parts[1]
 	tool_name = parts[2]
 	script_name = parts[3]
 	predecessor_dir = parts[4]
 	run_type = parts[5]
+
+	if run_certain_steps and step_name not in run_certain_steps:
+		print(f">>> Skipping step: {step_name}")
+		continue
 
 	##### Make directories for each step #####
 	step_dir 			= os.path.join(results_path, f"{step_name}_{tag}")
@@ -212,6 +227,8 @@ for line in matched_lines:
 		file.write("\n##### Step Variables #####\n")
 		# get from config tcl
 		file.write(f"set FLOW_STEP_NAME {step_name}\n")
+		if pre_step_name is not None:
+			file.write(f"set FLOW_PRESTEP_NAME {pre_step_name}\n")
 		file.write(f"set FLOW_PREDECESSOR_DIR {predecessor_dir}\n")
 		# get from this file
 		file.write(f"set FLOW_STEP_DIR {step_dir}\n")
@@ -250,16 +267,7 @@ for line in matched_lines:
 	if run_type == "serial":
 		p.wait()
 
-
-
 ##step5: summarize results
-
-
 
 print("flowrun executing finished")
 print('------------------------------------------------')
-
-
-
-
-
