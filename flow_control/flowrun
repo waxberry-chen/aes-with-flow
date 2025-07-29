@@ -245,6 +245,10 @@ for line in matched_lines:
 		command = f"{tool_name} -f {script_name} > {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
 	elif tool_name == "icc2_shell" and debug == "true":
 		command = f"{tool_name} -f {script_name} | tee {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+	elif tool_name == "icc2_lm_shell" and debug == "false":
+		command = f"{tool_name} -f {script_name} > {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
+	elif tool_name == "icc2_lm_shell" and debug == "true":
+		command = f"{tool_name} -f {script_name} | tee {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
 	elif tool_name == "pt_shell" and debug == "false" and "timinginit" in step_name:
 		command = f"{tool_name} -f {script_name} > {step_log_dir}/{tool_name}_{step_name}.{tag}.log"
 	elif tool_name == "pt_shell" and debug == "true" and "timinginit" in step_name:

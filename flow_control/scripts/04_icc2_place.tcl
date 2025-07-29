@@ -3,7 +3,7 @@ source ../${FLOW_DESIGN_NAME}.${FLOW_TAG}.usrconfig.tcl
 
 
 source ${WORK_SCRIPTS_DIR}/place_initial.tcl
-source ${WORK_SCRIPTS_DIR}/place_function.tcl
+source ${WORK_SCRIPTS_DIR}/icc2_function.tcl
 ################ message for current nlib##############
 set msg $MSG
 #######################################################
@@ -76,7 +76,7 @@ echo "$msg" >> $temp_ndm_path/tag
 # set used max cpu cores
 set_host_options -max_cores ${FLOW_CORE_NUM}
 
-redirect -tee $run_log/floorplan_run.log {
+# redirect -tee $run_log/floorplan_run.log {
     # ========== Create floorplan in ICC2 ========== #
     
     # ===== make database ===== #
@@ -147,7 +147,7 @@ redirect -tee $run_log/floorplan_run.log {
     #add 25-7-10 14:00
     set_app_options -name time.remove_clock_reconvergence_pessimism -value true
 
-}
+# }
 
 ## opt
 puts "\n Satrt place optimize:"

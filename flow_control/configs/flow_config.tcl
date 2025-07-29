@@ -9,11 +9,13 @@
 #step settings:stepnum stepname toolname toolscript predecessor runmode(only serial now)
 set FLOW_STEPS " \
 step1: syn dc_shell ../../flow_control/scripts/01_dc_syn.tcl ../global_input serial \
-step2: place icc2_shell ../../flow_control/scripts/02_icc2_place.tcl ./results/syn_${FLOW_TAG}/output serial \
-step3: clock icc2_shell ../../flow_control/scripts/03_icc2_clock.tcl ./results/place_${FLOW_TAG}/output serial \
-step4: clockopt icc2_shell ../../flow_control/scripts/04_icc2_clock_opt.tcl ./results/clock_${FLOW_TAG}/output serial \
-step5: route icc2_shell ../../flow_control/scripts/05_icc2_route.tcl ./results/clockopt_${FLOW_TAG}/output serial \
-step6: routeopt icc2_shell ../../flow_control/scripts/06_icc2_routeopt.tcl ./results/route_${FLOW_TAG}/output serial \
+step2: ndm icc2_lm_shell ../../flow_control/scripts/02_icc2lm_ndm.tcl ./results/syn_${FLOW_TAG}/output serial \
+step3: floorplan icc2_shell ../../flow_control/scripts/03_icc2_floorplan.tcl results/ndm_${FLOW_TAG}/output serial \
+step4: place icc2_shell ../../flow_control/scripts/04_icc2_place.tcl ./results/syn_${FLOW_TAG}/output serial \
+step5: clock icc2_shell ../../flow_control/scripts/05_icc2_clock.tcl ./results/place_${FLOW_TAG}/output serial \
+step6: clockopt icc2_shell ../../flow_control/scripts/06_icc2_clock_opt.tcl ./results/clock_${FLOW_TAG}/output serial \
+step7: route icc2_shell ../../flow_control/scripts/07_icc2_route.tcl ./results/clockopt_${FLOW_TAG}/output serial \
+step8: routeopt icc2_shell ../../flow_control/scripts/08_icc2_routeopt.tcl ./results/route_${FLOW_TAG}/output serial \
 "
 
 #---------------------------------------
