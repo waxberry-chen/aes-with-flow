@@ -1,33 +1,12 @@
 
-icc2_shell> man LNK-062
-N.  Messages                                                 Command Reference
-                                   messages
-
-NAME
-       LNK-062 (warning) Library %s reference library '%s' is not bound.
-
-DESCRIPTION
-       This  library  has  reference libraries that have not been bound to the
-       actual library named.  The link_block command cannot resolve references
-       to  blocks  or lib cells in the unbound library.  Those references will
-       be unresolved.
-
-       The specified block is in a library that  has  not  had  its  reference
-       library list set.  The reference library list is used to resolve refer-
-       ences to lib_cells and other blocks in the block hierarchy.
-
-WHAT NEXT
-       Verify that the reference library list on  this  library  is  set  cor-
-       rectly.   Correct  the setting with the set_ref_libs command.  Check to
-       see if the TCL search_path variable is  set  to  locate  that  library.
-       Verify  that  the  library  is on disk and readable.  Try to explicitly
-       open the library with the open_lib command.
-
-                          Version O-2018.06-SP1
-            Copyright (c) 2018 Synopsys, Inc. All rights reserved.
+icc2_shell> clock_opt -help
+Usage: clock_opt    # clock-opt Optimization
+        [-list_only]           (List sub-steps of clock_opt flow [ build_clock route_clock final_opto ])
+        [-from ]               (Run subset of clock_opt flow starting with specified step)
+        [-to ]                 (Run subset of clock_opt flow ending with specified step)
 icc2_shell> exit
 Maximum memory usage for this session: 126.29 MB
-CPU usage for this session:      3 seconds (  0.00 hours)
-Elapsed time for this session:    968 seconds (  0.27 hours)
+CPU usage for this session:      2 seconds (  0.00 hours)
+Elapsed time for this session:    276 seconds (  0.08 hours)
 Thank you for using IC Compiler II.
 

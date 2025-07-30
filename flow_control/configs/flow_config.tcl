@@ -8,14 +8,14 @@
 #---------------------------------------
 #step settings:stepnum stepname toolname toolscript predecessor runmode(only serial now)
 set FLOW_STEPS " \
-step1: syn dc_shell ../../flow_control/scripts/01_dc_syn.tcl ../global_input serial \
-step2: ndm icc2_lm_shell ../../flow_control/scripts/02_icc2lm_ndm.tcl ./results/syn_${FLOW_TAG}/output serial \
-step3: floorplan icc2_shell ../../flow_control/scripts/03_icc2_floorplan.tcl results/ndm_${FLOW_TAG}/output serial \
-step4: place icc2_shell ../../flow_control/scripts/04_icc2_place.tcl ./results/syn_${FLOW_TAG}/output serial \
-step5: clock icc2_shell ../../flow_control/scripts/05_icc2_clock.tcl ./results/place_${FLOW_TAG}/output serial \
-step6: clockopt icc2_shell ../../flow_control/scripts/06_icc2_clock_opt.tcl ./results/clock_${FLOW_TAG}/output serial \
-step7: route icc2_shell ../../flow_control/scripts/07_icc2_route.tcl ./results/clockopt_${FLOW_TAG}/output serial \
-step8: routeopt icc2_shell ../../flow_control/scripts/08_icc2_routeopt.tcl ./results/route_${FLOW_TAG}/output serial \
+step1: 01_syn dc_shell ../../flow_control/scripts/01_dc_syn.tcl ../global_input serial \
+step2: 02_ndm icc2_lm_shell ../../flow_control/scripts/02_icc2lm_ndm.tcl ./results/01_syn_${FLOW_TAG}/output serial \
+step3: 03_floorplan icc2_shell ../../flow_control/scripts/03_icc2_floorplan.tcl results/02_ndm_${FLOW_TAG}/output serial \
+step4: 04_place icc2_shell ../../flow_control/scripts/04_icc2_place.tcl ./results/03_floorplan_${FLOW_TAG}/output serial \
+step5: 05_clock icc2_shell ../../flow_control/scripts/05_icc2_clock.tcl ./results/04_place_${FLOW_TAG}/output serial \
+step6: 06_clockopt icc2_shell ../../flow_control/scripts/06_icc2_clock_opt.tcl ./results/05_clock_${FLOW_TAG}/output serial \
+step7: 07_route icc2_shell ../../flow_control/scripts/07_icc2_route.tcl ./results/06_clockopt_${FLOW_TAG}/output serial \
+step8: 08_routeopt icc2_shell ../../flow_control/scripts/08_icc2_routeopt.tcl ./results/07_route_${FLOW_TAG}/output serial \
 "
 
 #---------------------------------------

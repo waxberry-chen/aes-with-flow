@@ -8,7 +8,7 @@ source ../${FLOW_DESIGN_NAME}.${FLOW_TAG}.usrconfig.tcl
 set DESIGN_NAME $FLOW_DESIGN_NAME
 set TAG $FLOW_TAG
 set TOP_MODULE $FLOW_DESIGN_NAME
-set_host_options -max_cores $FLOW_CORE_NUM
+set_host_options -max_cores $FLOW_CORE_NUM_SYN
 define_design_lib WORK -path ${FLOW_STEP_DIR}/WORK
 
 #############################
@@ -90,12 +90,12 @@ foreach module_name $SUB_MODULES {
 ########################
 #     CHARACTERIZE     #
 ########################
-source ${WORK_SCRIPTS_DIR}/syn_characterize.tcl
+source ${WORK_SCRIPTS_DIR}/syn_steps/syn_characterize.tcl
 
 #####################
 #     RECOMPILE     #
 #####################
-source ${WORK_SCRIPTS_DIR}/syn_recompile.tcl
+source ${WORK_SCRIPTS_DIR}/syn_steps/syn_recompile.tcl
 
 ######################
 #     GET OUTPUT     #
@@ -104,8 +104,11 @@ current_design aes_128
 write -format ddc -hier -out "${FLOW_STEP_OUTPUT_DIR}/aes_128_final.ddc"
 write -format verilog -hier -out "${FLOW_STEP_OUTPUT_DIR}/aes_128_final.v"
 set rpt_file aes_128.rpt
-source "${WORK_SCRIPTS_DIR}/syn_report.tcl"
+source "${WORK_SCRIPTS_DIR}/syn_steps/syn_report.tcl"
 write_sdc "${FLOW_STEP_OUTPUT_DIR}/aes_128_final.sdc"
+
+##### Dump executed commands #####
+write_script -output ${FLOW_STEP_DIR}/wscript
 
 # Exit or wait
 if {[info exist FLOW_DEBUG] && [string match true $FLOW_DEBUG]} {

@@ -24,7 +24,7 @@ open_block ${design}_${current_step}.nlib:${design}.design
 
 
 ###scenarios 
-source ${WORK_SCRIPTS_DIR}/scenarios_route.tcl
+source ${WORK_SCRIPTS_DIR}/route_settings/scenarios_route.tcl
 
 set_propagated_clock [get_clocks -filter "is_virtual == false"]
 
@@ -79,6 +79,9 @@ save_block
 save_lib
 
 print_message_info
+
+##### Dump executed commands #####
+write_script -output ${FLOW_STEP_DIR}/wscript
 
 # Exit or wait
 if {[info exist FLOW_DEBUG] && [string match true $FLOW_DEBUG]} {

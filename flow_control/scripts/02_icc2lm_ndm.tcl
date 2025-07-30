@@ -11,7 +11,7 @@ source ../${FLOW_DESIGN_NAME}.${FLOW_TAG}.usrconfig.tcl
 ####################
 #     Make ndm     #
 ####################
-source ${WORK_SCRIPTS_DIR}/ndm_init/ndm_init.tcl
+source ${WORK_SCRIPTS_DIR}/ndm_settings/ndm_init.tcl
 source ${WORK_SCRIPTS_DIR}/icc2_function.tcl
 
 ##### Recieve parameters #####
@@ -45,4 +45,14 @@ foreach flow_step $ndm_flow_steps ndm_name $ndm_names {
 	check_workspace -details all -allow_missing
 	}
 	commit_workspace -output ${FLOW_STEP_OUTPUT_DIR}/${ndm_name}.ndm
+}
+
+##### Dump executed commands #####
+write_script -output ${FLOW_STEP_DIR}/wscript
+
+# Exit or wait
+if {[info exist FLOW_DEBUG] && [string match true $FLOW_DEBUG]} {
+	echo "debug mode, pls. manual exit when done."
+} else {
+	exit
 }

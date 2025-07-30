@@ -25,7 +25,7 @@ current_design T
 reset_design
 set rpt_file "initial_T.rpt"
 set design "T"
-source ${WORK_SCRIPTS_DIR}/syn_default.tcl
+source ${WORK_SCRIPTS_DIR}/syn_settings/syn_default.tcl
 # source "${FLOW_SCRIPTS_DIR}/default.con"
 
 # Define design environment
@@ -73,4 +73,4 @@ group_path -name high_effort_out_T -to $critical_port_T -critical_range 0.2 -wei
 
 #generate report
 write -format ddc -hier -o "${FLOW_STEP_BUFFER_DIR}/${design}.ddc"
-source "${WORK_SCRIPTS_DIR}/syn_report.tcl"
+source "${WORK_SCRIPTS_DIR}/syn_steps/syn_report.tcl"

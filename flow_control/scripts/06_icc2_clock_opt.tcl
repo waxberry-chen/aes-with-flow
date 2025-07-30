@@ -22,7 +22,7 @@ open_block ${design}_${current_step}.nlib:${design}.design
 
 
 ###scenarios 
-source ${WORK_SCRIPTS_DIR}/scenarios_clkopt.tcl
+source ${WORK_SCRIPTS_DIR}/clockopt_settings/scenarios_clkopt.tcl
 
 set_propagated_clock [get_clocks -filter "is_virtual == false"]
 
@@ -73,8 +73,10 @@ connect_pg_net -automatic
 save_block -force
 save_lib
 
-
 print_message_info
+
+##### Dump executed commands #####
+write_script -output ${FLOW_STEP_DIR}/wscript
 
 # Exit or wait
 if {[info exist FLOW_DEBUG] && [string match true $FLOW_DEBUG]} {

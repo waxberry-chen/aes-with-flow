@@ -158,6 +158,9 @@ if rtl_file_list_from_toml:
 	
 tcl_rtl_list_command = f"set RTL_FILES [list {' '.join(rtl_files_for_tcl)}]"
 
+#########
+# Write paths
+
 with open(init_file_name, 'a') as file:
 	##### Write paths #####
 	file.write("\n##### PDK & Library Environment Variables (from TOML) #####\n")
@@ -165,7 +168,7 @@ with open(init_file_name, 'a') as file:
 	file.write(f"set PDK_ROOT \"{pdk_root}\"\n")
 	# write other paths
 	for key, path_template in pdk_config['derived_paths'].items():
-		full_path = path_template.format(pdk_root=pdk_root)
+		full_path = path_template.format(pdk_root=pdk_root, tag=tag)
 		tcl_var_name = key.upper()
 		file.write(f"set {tcl_var_name} \"{full_path}\"\n")
     # Write file variables
@@ -217,10 +220,14 @@ for line in matched_lines:
 	step_log_dir 		= os.path.join(step_dir, f"log")
 	step_reports_dir 	= os.path.join(step_dir, f"reports")
 	step_buffer_dir		= os.path.join(step_dir, f"intermedia")
+	step_wscript_dir	= os.path.join(step_dir, f"wscript")
 	os.makedirs(step_output_dir, exist_ok=True)
 	os.makedirs(step_log_dir, exist_ok=True)
 	os.makedirs(step_reports_dir, exist_ok=True)
 	os.makedirs(step_buffer_dir, exist_ok=True)
+
+	# dont make dir, will cause error
+	# os.makedirs(step_wscript_dir, exist_ok=True)
 
 	#start to generate command:dc,tessent,dc_incr,dc_syn,pt,fm,vclp,gca / innovus,qrc,pt,lec,clp,gca
 	with open(init_file_name, 'a') as file:
@@ -236,6 +243,7 @@ for line in matched_lines:
 		file.write(f"set FLOW_STEP_LOG_DIR {step_log_dir}\n")
 		file.write(f"set FLOW_STEP_REPORTS_DIR {step_reports_dir}\n")
 		file.write(f"set FLOW_STEP_BUFFER_DIR {step_buffer_dir}\n")
+		file.write(f"set FLOW_STEP_WSCRIPT_DIR {step_wscript_dir}\n")
 
 	if tool_name == "dc_shell" and debug == "false":
 		command = f"{tool_name} -topo -f {script_name} > {step_log_dir}/{tool_name}_{step_name}.{tag}.log"

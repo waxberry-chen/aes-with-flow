@@ -42,7 +42,7 @@ open_block ${design}_${current_step}.nlib:${design}.design
 
 
 ###scenarios cts
-source ${WORK_SCRIPTS_DIR}/scenarios_cts.tcl
+source ${WORK_SCRIPTS_DIR}/clock_settings/scenarios_cts.tcl
 
 ###set routing layers
 set_ignored_layers -min_routing_layer M5 -max_routing_layer M8
@@ -82,10 +82,12 @@ save_lib
 
 print_message_info
 
+##### Dump executed commands #####
+write_script -output ${FLOW_STEP_DIR}/wscript
+
 # Exit or wait
 if {[info exist FLOW_DEBUG] && [string match true $FLOW_DEBUG]} {
 	echo "debug mode, pls. manual exit when done."
 } else {
 	exit
 }
-

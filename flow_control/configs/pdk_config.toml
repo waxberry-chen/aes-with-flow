@@ -17,6 +17,7 @@ mw_ref_lib_path = "{pdk_root}/astro/scc40nll_hdc40_rvt"
 tech_file_path  = "{pdk_root}/astro/tf"
 tluplus_path    = "{pdk_root}/astro/tluplus/TD-LO40-XS-2001v2R_1PxM_2TM9k_ALPA14.5k/1P10M_2TM"
 lef_file_path   = "{pdk_root}/lef/macro"
+syn_output_path = "./results/01_syn_{tag}/output"
 
 # --- Specific file names ---
 [files]

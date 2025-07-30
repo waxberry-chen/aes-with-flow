@@ -24,7 +24,7 @@ current_design top_comb
 reset_design
 set rpt_file "initial_top_comb.rpt"
 set design "top_comb"
-source "${WORK_SCRIPTS_DIR}/syn_default.tcl"
+source "${WORK_SCRIPTS_DIR}/syn_settings/syn_default.tcl"
 
 # Define design environment
 set ALL_INP_EXC_CLK [remove_from_collection [all_inputs] [get_ports $CLK_NAME]]
@@ -50,4 +50,4 @@ redirect -tee -file "${FLOW_STEP_LOG_DIR}/initial_${design}_compile.rpt" {compil
 
 #generate report
 write -format ddc -hier -o "${FLOW_STEP_BUFFER_DIR}/${design}.ddc"
-source "${WORK_SCRIPTS_DIR}/syn_report.tcl"
+source "${WORK_SCRIPTS_DIR}/syn_steps/syn_report.tcl"
